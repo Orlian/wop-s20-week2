@@ -16,16 +16,33 @@ const cat_get = async (req, res) => {
 };
 
 const cat_create_post = async (req, res) => {
-  console.log(req.body, req.file);
+  console.log('Cat create info: ', req.body, req.file);
   const {name, age, weight, owner} = req.body;
   const params = [name, age, weight, owner, req.file.filename];
-  const cat = await catModel.addCat(params);
+  await catModel.addCat(params);
 
-  res.send(cat);
-}
+  res.json({message: 'upload ok'});
+};
+
+const cat_update_put = async (req, res) => {
+  const {name, age, weight, owner, id} = req.body;
+  const params = [name, age, weight, owner, id];
+  await catModel.updateCat(params);
+
+  res.json({message: 'update ok'});
+};
+
+const cat_delete = async (req, res) => {
+  const id = req.params.id;
+  await catModel.deleteCat(id);
+
+  res.json({message: 'delete ok'});
+};
 
 module.exports = {
   cat_list_get,
   cat_get,
   cat_create_post,
+  cat_update_put,
+  cat_delete,
 };
