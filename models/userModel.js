@@ -37,10 +37,9 @@ const addUser = async (params) => {
 
 const getUserLogin = async (params) => {
   try {
-    console.log(params);
+    console.log('getUserLogin params', params);
     const [rows] = await promisePool.execute(
-        'SELECT * FROM wop_user WHERE email = ?;', params
-    );
+        'SELECT * FROM wop_user WHERE email = ?;', params);
     return rows;
   } catch(e) {
     console.log('UserModel error', e.message);
