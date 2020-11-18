@@ -2,6 +2,8 @@
 // catController
 const {validationResult} = require('express-validator');
 const catModel = require('../models/catModel');
+const {makeThumbnail} = require('../utils/resize');
+const imageMeta = require('../utils/imageMeta');
 
 const cat_list_get = async (req, res) => {
   const cats = await catModel.getAllCats();
@@ -22,8 +24,10 @@ const cat_create_post = async (req, res) => {
     return res.status(400).json({errors: errors.array()});
   }
 
+  const coords = await imageMeta.getCoordinates(req.file.path);
+
   const {name, age, weight, owner} = req.body;
-  const params = [name, age, weight, owner, req.file.filename];
+  const params = [name, age, weight, owner, req.file.filename, coords];
   await catModel.addCat(params);
 
   res.json({message: 'upload ok'});
@@ -34,6 +38,7 @@ const cat_update_put = async (req, res) => {
   if(!errors.isEmpty()){
     return res.status(400).json({errors: errors.array()});
   }
+
   const {name, age, weight, owner, id} = req.body;
   const params = [name, age, weight, owner, id];
   await catModel.updateCat(params);
@@ -48,10 +53,23 @@ const cat_delete = async (req, res) => {
   res.json({message: 'delete ok'});
 };
 
+const make_thumbnail = async (req, res, next) => {
+  try {
+    const kuvake = await makeThumbnail(req.file.path, req.file.filename);
+    console.log('kuvake:', kuvake)
+    if (kuvake) {
+      next();
+    }
+  } catch(err) {
+    res.status(400).json({errors: err.message});
+  }
+};
+
 module.exports = {
   cat_list_get,
   cat_get,
   cat_create_post,
   cat_update_put,
   cat_delete,
+  make_thumbnail,
 };

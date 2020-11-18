@@ -27,7 +27,7 @@ router.get('/', catController.cat_list_get);
 
 router.get('/:id', catController.cat_get);
 
-router.post('/', upload.single('cat'), injectFile ,[
+router.post('/', upload.single('cat'), injectFile, catController.make_thumbnail ,[
     body('name', 'Cat needs a name').trim().isLength({min: 1}),
     body('age', 'Age must be a number').trim().isLength({min: 1}).isInt(),
     body('weight', 'Weight must be a number').trim().isLength({min: 1}).isFloat(),
